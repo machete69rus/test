@@ -13,6 +13,10 @@ namespace WindowsFormsApp4
 {
     public partial class Form1 : Form
     {
+
+        private int readerIdCounter = 0;
+        private int writerIdCounter = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -74,19 +78,23 @@ namespace WindowsFormsApp4
 
         private void btnStartReaders_Click(object sender, EventArgs e)
         {
+            int localreaderId = 1;
+            readerIdCounter = 0;
             for (int i = 0; i < 10; i++)
             {
+               
+                int readerId = localreaderId++;
                 Task.Run(() =>
                 {
                     try
                     {
                         int value = Server.GetCount();
                         if (value != -1)
-                            UpdateListBox($"[Reader] Count = {value}");
+                            UpdateListBox($"[Reader] {readerId} Count = {value}");
                     }
                     catch (InvalidOperationException ex)
                     {
-                        UpdateListBox($"[Reader] ❌ {ex.Message}");
+                        UpdateListBox($"[Reader] {readerId} ❌ {ex.Message}");
                     }
                 });
             }
@@ -94,12 +102,16 @@ namespace WindowsFormsApp4
 
         private void btnStartWriters_Click(object sender, EventArgs e)
         {
+            int localwriterId = 0;
+            writerIdCounter = 0;
             for (int i = 0; i < 5; i++)
             {
+
+                int writerId = localwriterId++;
                 Task.Run(() =>
                 {
                     Server.AddToCount(1);
-                    UpdateListBox("[Writer] Добавил 1");
+                    UpdateListBox($"[Writer] {writerId} Добавил 1");
                 }
                 );
             }
